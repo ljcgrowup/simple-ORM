@@ -1,0 +1,29 @@
+{
+  "name": "ljcgrowup/simple-orm",
+  "description": "A simple and complete ORM for any project",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Rafael Fernandes",
+      "email": "rafael.ljcgrowup@gmail.com"
+    }
+  ],
+  "require": {
+    "PHP": ">=8.1",
+    "ext-pdo": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "LJCGrowup\\SimpleORM\\": "src/"
+    }
+  },
+  "require-dev": {
+    "pestphp/pest": "^2.20"
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
+}
