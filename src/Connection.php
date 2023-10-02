@@ -10,12 +10,10 @@ final class Connection
 {
     private function __construct(){}
 
-    public static function getConnection(string $filenameConnection)
+    public static function getConnection(array $db)
     {
-        if (file_exists($filenameConnection)) { 
-            $db = parse_ini_file($filenameConnection);
-        } else {
-            throw new Exception('Connection file not found');
+        if (!isset($db)) { 
+            throw new Exception('Connection data is missing');
         }
 
         $driver   = $db['driver'] ?? null;

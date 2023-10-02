@@ -18,6 +18,11 @@
       "LJCGrowup\\SimpleORM\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/" 
+    }
+  },
   "require-dev": {
     "pestphp/pest": "^2.20"
   },

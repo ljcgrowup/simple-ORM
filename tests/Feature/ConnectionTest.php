@@ -2,8 +2,10 @@
 
 use LJCGrowup\SimpleORM\Connection;
 
-test('Check if open method get connection', function () {
-    $connection = Connection::getConnection(__DIR__.'/../fixtures/sqlite.ini');
+test('Check if getConnection return a PDO object', function () {
+    $sqlConfigDB = require './tests/fixtures/database.php';
+    
+    $connection = Connection::getConnection($sqlConfigDB['sqlite']);
     
     expect($connection)->toBeInstanceOf(PDO::class);
 });
