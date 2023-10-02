@@ -12,7 +12,7 @@ final class Connection
 
     public static function getConnection(string $filenameConnection)
     {
-        if (file_exists($filenameConnection)) {
+        if (file_exists($filenameConnection)) { 
             $db = parse_ini_file($filenameConnection);
         } else {
             throw new Exception('Connection file not found');
@@ -25,26 +25,27 @@ final class Connection
         $user     = $db['user'] ?? null;
         $pwd      = $db['password'] ?? null;
 
+        $ports = [
+            'mysql' => '3306',
+            'pgsql' => '5432',
+            'mssql' => '1433',
+            'sqlite' => null,
+        ];
+
+        $port = $ports[$driver];
+
         $connection = null;
 
-        switch ($driver) {
-            case 'mysql':
-                $port = $port ?? '3306';
-                $connection = new PDO("mysql:host={$host};port={$port};dbname={$database}", $user, $pwd);
-                break;
-            case 'pgsql':
-                $port = $port ?? '5432';
-                $connection = new PDO("pgsql:dbname={$database}; user={$user}; password={$pwd}; host={$host}; port={$port}");
-                break;
-            case 'sqlite':
-                $connection = new PDO("sqlite:{$database}");
-                $connection->query('PRAGMA foreign_keys = ON');
-                break;
-            case 'mssql':
-                $conn = new PDO("dblib:host={$host}:{$port};dbname={$database}", $user, $pwd);
-                break;
-            default:
-                throw new PDOException('This package does not yet implements the required driver');
+        $connection = match($driver) {
+            'mysql'   => new PDO("mysql:host={$host};port={$port};dbname={$database}", $user, $pwd),
+            'pgsql'   => new PDO("pgsql:dbname={$database}; user={$user}; password={$pwd}; host={$host}; port={$port}"),
+            'mssql'   => new PDO("sqlsrv:host={$host}:{$port};dbname={$database}", $user, $pwd),
+            'sqlite'  => new PDO("sqlite:{$database}"),
+            default => throw new PDOException('This package does not yet implements the required driver')
+        };
+
+        if ($driver == 'sqlite') {
+            $connection->query('PRAGMA foreign_keys = ON');
         }
 
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
