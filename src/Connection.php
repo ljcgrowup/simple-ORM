@@ -41,7 +41,7 @@ final class Connection
             'pgsql'   => new PDO("pgsql:dbname={$database}; user={$user}; password={$pwd}; host={$host}; port={$port}"),
             'mssql'   => new PDO("sqlsrv:host={$host}:{$port};dbname={$database}", $user, $pwd),
             'sqlite'  => new PDO("sqlite:{$database}"),
-            default => throw new PDOException('This package does not yet implements the required driver')
+            default => throw new PDOException('This driver does not exist or this package does not yet implement the required driver')
         };
 
         if ($driver == 'sqlite') {
