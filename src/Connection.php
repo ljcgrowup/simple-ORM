@@ -61,19 +61,19 @@ final class Connection
     public static function beginTransaction()
     {
         self::hasOpenConnection();
-        self::$connection->beginTransaction();
+        return self::$connection->beginTransaction();
     }
 
     public static function commit()
     {
         self::hasOpenConnection();
-        self::$connection->commit();
+        return self::$connection->commit();
     }
 
     public static function rollback()
     {
         self::hasOpenConnection();
-        self::$connection->rollback();
+        return self::$connection->rollback();
     }
     
     public static function close()
@@ -86,6 +86,6 @@ final class Connection
     {
         if (empty(self::$connection)) {
             throw new PDOException('There is no open connection');
-        }   
+        }
     }
 }

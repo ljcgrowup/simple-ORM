@@ -16,7 +16,7 @@ abstract class Model
         }
     }
 
-    public function find($id)
+    public function findById($id)
     {
         $sql = "select * from {$this->table} where " .
         ($this->idColumnName ?? "id") . " = :id";
