@@ -6,11 +6,15 @@ use \Exception;
 use \PDO;
 use \PDOException;
 
+use function PHPUnit\Framework\throwException;
+
 final class Connection
 {
+    private static ?PDO $connection;
+
     private function __construct(){}
 
-    public static function getConnection(array $db)
+    public static function open(array $db)
     {
         if (!isset($db)) { 
             throw new Exception('Connection data is missing');
@@ -32,9 +36,7 @@ final class Connection
 
         $port = $ports[$driver];
 
-        $connection = null;
-
-        $connection = match($driver) {
+        self::$connection = match($driver) {
             'mysql'   => new PDO("mysql:host={$host};port={$port};dbname={$database}", $user, $pwd),
             'pgsql'   => new PDO("pgsql:dbname={$database}; user={$user}; password={$pwd}; host={$host}; port={$port}"),
             'mssql'   => new PDO("sqlsrv:host={$host}:{$port};dbname={$database}", $user, $pwd),
@@ -43,10 +45,47 @@ final class Connection
         };
 
         if ($driver == 'sqlite') {
-            $connection->query('PRAGMA foreign_keys = ON');
+            self::$connection->query('PRAGMA foreign_keys = ON');
         }
 
-        $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        return $connection;
+        self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return self::$connection;
+    }
+
+    public static function getConnection()
+    {
+        self::hasOpenConnection();
+        return self::$connection;
+    }
+
+    public static function beginTransaction()
+    {
+        self::hasOpenConnection();
+        self::$connection->beginTransaction();
+    }
+
+    public static function commit()
+    {
+        self::hasOpenConnection();
+        self::$connection->commit();
+    }
+
+    public static function rollback()
+    {
+        self::hasOpenConnection();
+        self::$connection->rollback();
+    }
+    
+    public static function close()
+    {
+        self::hasOpenConnection();
+        unset(self::$connection);
+    }
+    
+    private static function hasOpenConnection()
+    {
+        if (empty(self::$connection)) {
+            throw new PDOException('There is no open connection');
+        }   
     }
 }
